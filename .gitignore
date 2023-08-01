@@ -8,3 +8,4 @@ bookmark/
 *.log
 config.yaml
 
+.DS_Store

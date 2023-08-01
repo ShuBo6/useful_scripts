@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  creationTimestamp: null
+  name: dukou-checkin
+  namespace: dukou
+spec:
+  jobTemplate:
+    metadata:
+      creationTimestamp: null
+      name: dukou-checkin
+    spec:
+      template:
+        metadata:
+          creationTimestamp: null
+        spec:
+          volumes:
+          - name: configyaml
+            configMap:
+              name: configyaml
+              defaultMode: 420
+          containers:
+          - env:
+              - name: http_proxy
+                value: http://xx:xxxxxx.@proxy.xxxx.com:7890
+              - name: https_proxy
+                value: http://xxx:xxxxxx.@proxy.xxxxx.com:7890
+            command:
+            - sh
+            - -c
+            # - sleep 999999999
+            - python /app/checkin.py
+            image: wangshubo/dukou:20230801-h
+            name: dukou-checkin
+            resources: {}
+            volumeMounts:
+              - name: configyaml
+                mountPath: /app/config.yaml
+                subPath: config.yaml
+          restartPolicy: OnFailure
+  schedule: '@daily'
+status: {}
