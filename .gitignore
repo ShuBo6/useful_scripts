@@ -1,10 +1,12 @@
 # directory
 .vscode/*
 .venv/*
+.idea/*
+.DS_Store
 **/__pycache__
 bookmark/
 
 # file
 *.log
-config.yaml
+*config.yaml
 
