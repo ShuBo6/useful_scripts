@@ -1,4 +1,6 @@
 # directory
+.idea/*
+
 .vscode/*
 .venv/*
 **/__pycache__
@@ -6,5 +8,5 @@ bookmark/
 
 # file
 *.log
-config.yaml
+*/config.yaml
 
