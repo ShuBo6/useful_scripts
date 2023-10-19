@@ -5,13 +5,11 @@ FROM python:3.10-slim
 WORKDIR /app
 
 
-# 安装requests库
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
-
-RUN pip install requests pyyaml
+# 安装ca && pip 安装依赖
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && pip install requests pyyaml
 # RUN pip install -r requirements.txt
 
-# 将当前目录下的所有文件复制到容器的/app目录下
+# 将当前目录(app/python)下的所有文件复制到容器的/app目录下
 COPY dukou /app/python/dukou
 COPY logger /app/python/logger
 

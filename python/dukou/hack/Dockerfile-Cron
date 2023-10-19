@@ -1,0 +1,26 @@
+# 使用Python官方的镜像作为基础镜像
+FROM python:3.10-slim
+
+# 将工作目录设置为/app
+WORKDIR /app
+
+
+# 安装cron和ca && pip 安装依赖
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates cron && pip install requests pyyaml
+
+# 将当前目录(app/python)下的所有文件复制到容器的/app目录下
+COPY dukou /app/python/dukou
+COPY logger /app/python/logger
+
+ENV PYTHONPATH "/app/python"
+
+# 添加crontab文件
+RUN touch /etc/cron.d/submit-cron &&  \
+    echo "0 8 * * * root python /app/python/dukou/checkin.py >> /var/log/cron.log 2>&1" > /etc/cron.d/submit-cron &&  \
+    chmod 0644 /etc/cron.d/submit-cron && \
+    touch /var/log/cron.log && \
+    rm -rf /etc/localtime && \
+    ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+# 启动cron 并打印日志
+CMD cron && tail -f /var/log/cron.log
