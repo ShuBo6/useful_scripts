@@ -16,7 +16,7 @@ ENV PYTHONPATH "/app/python"
 
 # 添加crontab文件
 RUN touch /etc/cron.d/submit-cron &&  \
-    echo "0 8 * * * root python /app/python/dukou/checkin.py >> /var/log/cron.log 2>&1" > /etc/cron.d/submit-cron &&  \
+    echo "0 8 * * * root /usr/local/bin/python /app/python/dukou/checkin.py >> /var/log/cron.log 2>&1" > /etc/cron.d/submit-cron &&  \
     chmod 0644 /etc/cron.d/submit-cron && \
     touch /var/log/cron.log && \
     rm -rf /etc/localtime && \
