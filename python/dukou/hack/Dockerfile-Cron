@@ -15,12 +15,16 @@ COPY logger /app/python/logger
 ENV PYTHONPATH "/app/python"
 
 # 添加crontab文件
-RUN touch /etc/cron.d/submit-cron &&  \
-    echo "0 8 * * * root /usr/local/bin/python /app/python/dukou/checkin.py >> /var/log/cron.log 2>&1" > /etc/cron.d/submit-cron &&  \
-    chmod 0644 /etc/cron.d/submit-cron && \
+RUN touch /app/python/checkin.sh &&  \
+    touch /etc/cron.d/dukou-checkin-cron &&  \
+    echo "PYTHONPATH=/app/python /usr/local/bin/python /app/python/dukou/checkin.py >> /var/log/cron.log 2>&1" > /app/python/checkin.sh &&  \
+    echo "0 8 * * * root /app/python/checkin.sh" > /etc/cron.d/dukou-checkin-cron &&  \
+    chmod 0644 /app/python/dukou/checkin.py && \
+    chmod +x /app/python/checkin.sh && \
+    chmod 0644 /etc/cron.d/dukou-checkin-cron && \
     touch /var/log/cron.log && \
     rm -rf /etc/localtime && \
     ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
-# 启动cron 并打印日志
-CMD cron && tail -f /var/log/cron.log
+# 启动容器立即执行一次，并启动cron 并打印日志
+CMD ["sh","-c", "/app/python/checkin.sh  && cron && tail -f /var/log/cron.log"]
