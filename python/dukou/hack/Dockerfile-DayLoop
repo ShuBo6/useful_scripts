@@ -5,14 +5,20 @@ FROM python:3.10-slim
 WORKDIR /app
 
 
-# 安装ca && pip 安装依赖
+# 安装cron和ca && pip 安装依赖
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && pip install requests pyyaml
-# RUN pip install -r requirements.txt
 
 # 将当前目录(app/python)下的所有文件复制到容器的/app目录下
 COPY dukou /app/python/dukou
 COPY logger /app/python/logger
 
 ENV PYTHONPATH "/app/python"
-# 运行Python程序
-CMD ["python", "/app/python/dukou/checkin.py"]
+
+# 添加crontab文件
+RUN chmod 0644 /app/python/dukou/checkin.py && \
+    chmod +x /app/python/dukou/hack/checkin-dayloop.sh && \
+    rm -rf /etc/localtime && \
+    ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+
+# 启动容器立即执行一次，并启动cron 并打印日志
+CMD ["bash","/app/python/dukou/hack/checkin-dayloop.sh"]
